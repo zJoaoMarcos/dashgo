@@ -1,4 +1,4 @@
-import axios from "axios";
+import { api } from "@/services/axios/api";
 import { useQuery } from "react-query";
 
 type UserProps = {
@@ -8,8 +8,8 @@ type UserProps = {
   createdAt: string;
 };
 
-async function getUsersList(): Promise<UserProps[]> {
-  const { data } = await axios.get("http://localhost:3000/api/users");
+export async function getUsersList(): Promise<UserProps[]> {
+  const { data } = await api.get("users");
 
   const users = data.users.map((user: UserProps) => {
     return {
@@ -28,5 +28,7 @@ async function getUsersList(): Promise<UserProps[]> {
 }
 
 export function UseUsersList() {
-  return useQuery("users", getUsersList);
+  return useQuery("users", getUsersList, {
+    staleTime: 60 * 60, // 1 h
+  });
 }

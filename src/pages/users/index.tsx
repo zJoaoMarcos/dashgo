@@ -25,6 +25,8 @@ import { RiAddLine, RiPencilLine } from "react-icons/ri";
 export default function UserList() {
   const { data, isLoading, isFetching, isError, isSuccess } = UseUsersList();
 
+  console.log(data);
+
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
