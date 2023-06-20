@@ -41,8 +41,8 @@ type UserListProps = {
 export default function UserList({ users, totalCount }: UserListProps) {
   const [page, setPage] = useState(1);
   const { data, isLoading, isFetching, isError, isSuccess } = UseUsersList(
-    page,
-    { initialData: users }
+    page
+    /* { initialData: users }  with mirage it doesn't work */
   );
 
   const isWideVersion = useBreakpointValue({
@@ -170,6 +170,7 @@ export default function UserList({ users, totalCount }: UserListProps) {
   );
 }
 
+// with mirage it doesn't work
 export const getServerSideProps: GetServerSideProps = async () => {
   const { totalCount, users } = await getUsersList(1);
 
