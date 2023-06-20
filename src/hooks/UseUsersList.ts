@@ -1,5 +1,5 @@
 import { api } from "@/services/axios/api";
-import { useQuery } from "react-query";
+import { UseQueryOptions, UseQueryResult, useQuery } from "react-query";
 
 type UserProps = {
   id: string;
@@ -8,8 +8,19 @@ type UserProps = {
   createdAt: string;
 };
 
-export async function getUsersList(): Promise<UserProps[]> {
-  const { data } = await api.get("users");
+type GetUsersResponse = {
+  totalCount: number;
+  users: UserProps[];
+};
+
+export async function getUsersList(page: number): Promise<GetUsersResponse> {
+  const { data, headers } = await api.get("users", {
+    params: {
+      page,
+    },
+  });
+
+  const totalCount = Number(headers["x-total-count"]);
 
   const users = data.users.map((user: UserProps) => {
     return {
@@ -24,11 +35,15 @@ export async function getUsersList(): Promise<UserProps[]> {
     };
   });
 
-  return users;
+  return {
+    users,
+    totalCount,
+  };
 }
 
-export function UseUsersList() {
-  return useQuery("users", getUsersList, {
-    staleTime: 60 * 60, // 1 h
-  });
+export function UseUsersList(page: number, options?: UseQueryOptions) {
+  return useQuery(["users", page], () => getUsersList(page), {
+    ...options,
+    staleTime: 1000 * 60 * 60, // 1 h
+  }) as UseQueryResult<GetUsersResponse, unknown>;
 }
